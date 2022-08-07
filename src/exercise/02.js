@@ -4,11 +4,16 @@
 import * as React from 'react';
 import { Switch } from '../switch';
 
-function Toggle({ children }) {
+function Toggle(props) {
   const [on, setOn] = React.useState(false);
   const toggle = () => setOn(!on);
 
-  return children({ on, toggle });
+  return React.Children.map(props.children, child => {
+    const config = typeof child.type === 'string' ? null : { on, toggle };
+    return (
+      React.cloneElement(child, config)
+    );
+  });
 }
 
 const ToggleOn = ({ on, children }) => on ? children : null;
@@ -21,13 +26,10 @@ function App() {
   return (
     <div>
       <Toggle>
-        {({ on, toggle }) => (
-          <>
-            <ToggleOn on={on}>The button is on</ToggleOn>
-            <ToggleOff on={on}>The button is off</ToggleOff>
-            <ToggleButton on={on} toggle={toggle} />
-          </>
-        )}
+        <ToggleOn>The button is on</ToggleOn>
+        <ToggleOff>The button is off</ToggleOff>
+        <span>Hello</span>
+        <ToggleButton />
       </Toggle>
     </div>
   );

@@ -10,6 +10,8 @@ export function useControlledSwitchWarning(
   const { current: wasControlled } = React.useRef(isControlled);
 
   React.useEffect(() => {
+    if (process.env.NODE_ENV === 'production') return;
+
     warning(
       !(isControlled && !wasControlled),
       `\`${componentName}\` is changing from uncontrolled to be controlled. Reach UI components should not switch from uncontrolled to controlled (or vice versa). Decide between using a controlled or uncontrolled \`${componentName}\` for the lifetime of the component. Check the \`${controlPropName}\` prop.`

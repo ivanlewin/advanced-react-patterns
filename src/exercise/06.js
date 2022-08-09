@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { Switch } from '../switch';
 import warning from 'warning';
+import { useControlledSwitchWarning } from './useControlledSwitchWarning';
 
 const callAll = (...fns) => (...args) => fns.forEach(fn => fn?.(...args));
 
@@ -36,15 +37,13 @@ function useToggle({
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const onIsControlled = typeof controlledOn === 'boolean';
 
+  useControlledSwitchWarning(controlledOn, 'controlledOn', 'useToggle');
+
   const previousControlledOn = React.useRef(controlledOn);
   const on = onIsControlled ? controlledOn : state.on;
 
   React.useEffect(() => {
     warning(!(onIsControlled && onChange === undefined), "Passing on without onChange");
-
-    warning(!((previousControlledOn.current === null || previousControlledOn.current === undefined) && typeof controlledOn === 'boolean'), "Passing undefined or null for on and later passing a value");
-    warning(!(typeof previousControlledOn.current === 'boolean' && (controlledOn === null || controlledOn === undefined)), "Passing a value for on and later passing undefined or null");
-
     previousControlledOn.current = controlledOn;
   }, [onIsControlled, controlledOn, onChange]);
 
